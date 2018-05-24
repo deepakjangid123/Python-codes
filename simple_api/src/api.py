@@ -3,9 +3,8 @@ from flask import Flask
 from flask import make_response
 from flask import jsonify
 from flask import request
-from flask import abort
 from flask import Response
-from cerberus import Validator
+from schema import Schema, And, Use, Optional
 
 app = Flask(__name__)
 
@@ -22,15 +21,14 @@ def not_found():
 
 @app.route('/request-validate', methods=['POST'])
 def req_validator():
-    print(request.json)
-    schema = {'title': {'type': 'integer'}, 'A': {'type': 'list'}}
-    v = Validator(schema)
-    if not (v.validate(request.json)):
-        print(v.errors)
-    if not request.json or not 'title' in request.json:
-        abort(500)
-    task = dict(title=request.json['title'], description=request.json.get('description'), done=False)
-    return Response(json.dumps({'task': task}), mimetype='application/json', status=200)
+    schema = Schema({'title': And(str, len),
+                     'age': And(Use(int), lambda n: 18 <= n <= 99),
+                     Optional('gender'): And(str, Use(str.lower), lambda s: s in ('squid', 'kid'))})
+    try:
+        data = schema.validate(request.json)
+    except Exception as e:
+        return Response(json.dumps({'data': str(e)}), mimetype='application/json', status=400)
+    return Response(json.dumps({'data': data}), mimetype='application/json', status=200)
 
 
 if __name__ == '__main__':
