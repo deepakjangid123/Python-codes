@@ -157,6 +157,31 @@ def lcm_using_gcd(x: int, y: int) -> int:
     return (x*y)//gcd(x, y)
 
 
+def prime_factors(number: int) -> list:
+    """
+    :param number: Number for which we need to find out prime factors
+    :return: Returns list of prime factors
+    """
+    res = []
+    # Check while number is divided by 2
+    while number % 2 == 0:
+        res.append(2)
+        number /= 2
+
+    # Now check for other prime factors in range from 3 to square root of number at step size 2
+    for i in range(3, int(math.sqrt(number)) + 1, 2):
+        while number % i == 0:
+            res.append(i)
+            number /= i
+
+    # Now if number is still greater than 2,
+    # which means some prime factor has left to append that also to result
+    if number > 2:
+        res.append(number)
+
+    return res
+
+
 if __name__ == '__main__':
     print(factorial_reduce(13))
     print(find_all_prime_numbers_in_interval(4, 100))
@@ -169,3 +194,4 @@ if __name__ == '__main__':
     print(lcm(3, 4))
     print(gcd(3, 12))
     print(lcm_using_gcd(3, 4))
+    print(prime_factors(300))
