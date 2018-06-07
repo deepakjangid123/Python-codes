@@ -4,6 +4,38 @@ import math
 import collections
 
 
+def infixToPostfix(infixexpr):
+    prec = {}
+    prec["*"] = 3
+    prec["/"] = 3
+    prec["+"] = 2
+    prec["-"] = 2
+    prec["("] = 1
+    opStack = list() # Stack()
+    postfixList = []
+    tokenList = infixexpr.split()
+
+    for token in tokenList:
+        if token in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" or token in "0123456789":
+            postfixList.append(token)
+        elif token == '(':
+            opStack.append(token)
+        elif token == ')':
+            topToken = opStack.pop()
+            while topToken != '(':
+                postfixList.append(topToken)
+                topToken = opStack.pop()
+        else:
+            while (len(opStack)) and \
+               (prec[opStack[len(opStack) - 1]] >= prec[token]):
+                  postfixList.append(opStack.pop())
+            opStack.append(token)
+
+    while len(opStack):
+        postfixList.append(opStack.pop())
+    return " ".join(postfixList)
+
+
 def factorial_reduce(number: int) -> int:
     """
     :param number: Number for which you want to find factorial
@@ -182,6 +214,74 @@ def prime_factors(number: int) -> list:
     return res
 
 
+def find_number_of_triangles(arr: list) -> int:
+    """
+    :param arr: List of numbers
+    :return: Returns the possible number of triangles can be formed by using these list of numbers.
+    """
+    # Sort the array and initialize count to 0
+    n = len(arr)
+    arr.sort()
+    number_of_triangles = 0  # type: int # Initialize number of triangles
+
+    # Fix first element. We need to go by n-3 elements as the other two elements will be selected from [i+1...n-1]
+    for i in range(0, n - 2):
+
+        # Initialize index of the right most element
+        k = i + 2
+
+        # Fix the second element
+        for j in range(i + 1, n):
+
+            # Find the right most element which is smaller than
+            # the sum of these two elements. Because to form a triangle a + b > c should be satisfied.
+            # And we have sorted array so till when we will be getting this condition satisfied
+            # we can form that much triangles.
+            while k < n and arr[i] + arr[j] > arr[k]:
+                k += 1
+
+            # Now total numbers of possible triangles can be (k - j - 1).
+            # Because k is one index ahead already in last iteration of while.
+            number_of_triangles += k - j - 1
+    
+    return number_of_triangles
+
+
+def count_of_all_pairs_sum(arr, n, sum):
+    """
+    :param arr: List of numbers
+    :param n: Length of arr
+    :param sum: Sum for which we have to find out pairs in arr
+    :return: Returns the count of such possible pairs
+    """
+
+    m = [0] * 1000 # This number should be greater than the largest number in arr
+
+    # Store counts of elements in map m
+    for i in range(0, n):
+        m[arr[i]] += 1
+
+    twice_count = 0
+
+    # Iterate through each element and increment
+    # the count (Notice that every pair is
+    # counted twice)
+    for i in range(0, n):
+
+        twice_count += m[sum - arr[i]]
+
+        # if (arr[i], arr[i]) pair satisfies the
+        # condition, then we need to ensure that
+        # the count is  decreased by one such
+        # that the (arr[i], arr[i]) pair is not
+        # considered
+        if sum - arr[i] == arr[i]:
+            twice_count -= 1
+
+    # return the half of twice_count
+    return int(twice_count / 2)
+
+
 if __name__ == '__main__':
     print(factorial_reduce(13))
     print(find_all_prime_numbers_in_interval(4, 100))
@@ -195,3 +295,7 @@ if __name__ == '__main__':
     print(gcd(3, 12))
     print(lcm_using_gcd(3, 4))
     print(prime_factors(300))
+    print(find_number_of_triangles([10, 21, 22, 100, 101, 200, 300]))
+    print(infixToPostfix("A * B + C * D"))
+    print(infixToPostfix("( A + B ) * C - ( D - E ) * ( F + G )"))
+    print(count_of_all_pairs_sum([1, 5, 7, -1, 5], 5, 6))
