@@ -16,13 +16,13 @@ If the ith integer is 0 it denotes that ith node is black , otherwise it is whit
 Output a single integer denoting the length of the optimal path fulfilling the requirements. Print -1 if there is no such path.
 
 ### Sample input
-6 6
-1 2 1
-2 3 1
-1 4 2
-4 3 2
-3 5 2
-5 6 3
+6 6 \
+1 2 1 \
+2 3 1 \
+1 4 2 \
+4 3 2 \
+3 5 2 \
+5 6 3 \
 1 1 1 0 0 0
 
 ### Sample output
