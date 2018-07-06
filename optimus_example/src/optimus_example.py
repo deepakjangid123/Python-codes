@@ -1,16 +1,13 @@
 from pyspark.sql import SparkSession
-from pyspark.ml.linalg import Vectors
 # Importing optimus
 import optimus as op
 import pandas as pd
 
-# from pprint import pprint
-
 countries = ['Colombia', 'US@A', None, 'Spain', 'Spain']
 cities = [None, 'New York', ' Sao polo ', '~Madrid', ' Madrid ']
-population = [Vectors.dense([37800000, 1567]), Vectors.dense([19795791, 8967]),
-              Vectors.dense([12341418, 86237846632]), Vectors.dense([6489162, 676743]),
-              Vectors.dense([6489162, 67674323])]
+population = [[37800000, 1567], [19795791, 8967],
+              [12341418, 86237846632], [6489162, 676743],
+              [6489162, 67674323]]
 
 # Creating Spark Session
 spark_session = SparkSession.builder.master("local[*]").appName("Optimus").getOrCreate()
@@ -20,6 +17,14 @@ data = {'countries': countries, 'cities': cities, 'population': population}
 # DataFrame
 df = pd.DataFrame(data)
 df = spark_session.createDataFrame(df)
+
+df.show()
+
+# Apply normalizer on population column
+transformer = op.DataFrameTransformer(df)
+transformer.normalizer("population", p=1.0)
+print('DataFrame after applying `normalization` to `population` column:')
+transformer.show()
 
 
 # Instantiation of DataTransformer class
