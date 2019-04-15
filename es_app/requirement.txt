@@ -6,6 +6,6 @@ Jinja2==2.10.1
 MarkupSafe==1.0
 pytz==2018.4
 schema==0.6.7
-urllib3==1.22
+urllib3>=1.23
 Werkzeug==0.14.1
 zope.interface==4.5.0
